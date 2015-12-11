@@ -1,4 +1,15 @@
 Recaptcha_XH -- a CMSimple_XH plugin
+
+*2015/12/11 Support reCAPTCHA api Ver2.0
+
+**
+Please Set New Key : plugins > Recaptcha > Configuration
+ site : Site key:you've got from the signup page.(same old version's Public key)
+ secret : Secret key:you've got from the signup page.(same old version's Private key)
+
+Copyright (C) 2015 utaka CMSimple-jp.org
+
+
 Copyright (C) 2011 Christoph M. Becker
 
 This program is free software: you can redistribute it and/or modify

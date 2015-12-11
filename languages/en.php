@@ -17,8 +17,11 @@ $plugin_tx['recaptcha']['captcha_help_btn']="";
 $plugin_tx['recaptcha']['captcha_incorrect_try_again']="";
 
 $plugin_tx['recaptcha']['cf_utf-8-marker']="Internal usage. <strong>Do not change!</strong>";
-$plugin_tx['recaptcha']['cf_key_public']="The public key you've got from the signup page";
-$plugin_tx['recaptcha']['cf_key_private']="The private key you've got from the signup page";
-$plugin_tx['recaptcha']['cf_theme']="The theme of reCAPTCHA: <em>red</em>, <em>white</em>, <em>blackglass</em> or <em>clean</em>";
+$plugin_tx['recaptcha']['cf_key_site']="Site key:you've got from the signup page.(same old version's Public key) ";
+$plugin_tx['recaptcha']['cf_key_secret']="Secret key:you've got from the signup page.(same old version's Private key)";
+$plugin_tx['recaptcha']['cf_language']="Forces the widget to render in a specific language. Auto-detects the user's language if blank.Default <em>blank</em>";
+$plugin_tx['recaptcha']['cf_theme']="The theme of reCAPTCHA: <em>light</em>, <em>dark</em>.Default <em>light</em>";
+$plugin_tx['recaptcha']['cf_type']="The type of reCAPTCHA: <em>image</em>, <em>audio</em>.Default <em>image</em>";
+$plugin_tx['recaptcha']['cf_size']="The size of reCAPTCHA: <em>normal</em>, <em>compact</em>.Default <em>normal</em>";
 
 ?>

@@ -3,7 +3,11 @@
 /**
  * Captcha of Recaptcha_XH.
  *
+ * Site Key : $plugin_cf['recaptcha']['key_public']
+ * Secret Key :$plugin_cf['recaptcha']['key_private']
+ *
  * Copyright (c) 2011 Christoph M. Becker (see license.txt)
+ * Copyright (c) 2015 utaka <http://cmsimple-jp.org/>
  */
  
 
@@ -15,7 +19,6 @@ if (!defined('CMSIMPLE_XH_VERSION')) {
     exit;
 }
 
-
 /**
  * Returns the (x)html block element displaying the captcha,
  * the input field for the captcha code and all other elements,
@@ -25,34 +28,28 @@ if (!defined('CMSIMPLE_XH_VERSION')) {
  * @return string
  */
 function recaptcha_captcha_display() {
-    global $pth, $plugin_cf, $plugin_tx, $hjs, $sl;
-    
-    $pcf =& $plugin_cf['recaptcha'];
-    $ptx =& $plugin_tx['recaptcha'];
-    
-    require_once $pth['folder']['plugins'].'recaptcha/recaptcha/recaptchalib.php';
-    $hjs .= '<script type="text/javascript">'."\n".'/* <![CDATA[ */'."\n"
-	    .'var RecaptchaOptions = {'."\n"
-	    .'    custom_translations: {'."\n";
-    $first = TRUE;
-    foreach ($ptx as $key => $val) {
-	$keys = explode('_', $key, 2);
-	if ($keys[0] == 'captcha' && $val != '') {
-	    if ($first) {
-		$hjs .= '        ';
-		$first = FALSE;
-	    } else {
-		$hjs .= ','."\n".'        ';
-	    }
-	    $hjs .= $keys[1].': \''.addslashes($val).'\'';
+    global $plugin_cf, $hjs;
+	
+	// into <head>~</head>
+    $hjs .= '<script src="https://www.google.com/recaptcha/api.js';
+	if(!empty($plugin_cf['recaptcha']['language'])){
+		$hjs .= '?hl=' . $plugin_cf['recaptcha']['language'];
 	}
-    }
-    $hjs .= "\n".'    },'."\n"
-	    .'    theme: \''.$pcf['theme'].'\','."\n"
-	    .'    lang: \''.$sl.'\''."\n"
-	    .'}'."\n"
-	    .'/* ]]> */'."\n".'</script>'."\n";
-    return recaptcha_get_html($pcf['key_public']);
+    $hjs .= '"></script>';
+
+	// into <form>~</form>
+    $into_form = '<div class="g-recaptcha"';
+	if(trim($plugin_cf['recaptcha']['theme']) == 'dark'){
+		$into_form .= ' data-theme="dark"';
+	}
+	if(trim($plugin_cf['recaptcha']['type']) == 'audio'){
+		$into_form .= ' data-type="audio"';
+	}
+	if(trim($plugin_cf['recaptcha']['size']) == 'compact'){
+		$into_form .= ' data-size="compact"';
+	}
+	$into_form .= ' data-sitekey="'. $plugin_cf['recaptcha']['key_site'] .'"></div>';
+    return $into_form;
 }
 
 
@@ -63,14 +60,28 @@ function recaptcha_captcha_display() {
  * @return bool
  */
 function recaptcha_captcha_check() {
-    global $pth, $plugin_cf;
-    
-    require_once $pth['folder']['plugins'].'recaptcha/recaptcha/recaptchalib.php';
-    $resp = recaptcha_check_answer ($plugin_cf['recaptcha']['key_private'],
-	    $_SERVER['REMOTE_ADDR'],
-	    $_POST['recaptcha_challenge_field'],
-	    $_POST['recaptcha_response_field']);
-    return $resp->is_valid;
+    global $plugin_cf;
+
+    if (isset($_POST['g-recaptcha-response']) && !empty($_POST['g-recaptcha-response']) &&
+        is_string($_POST['g-recaptcha-response'])) {
+        $response_key = $_POST["g-recaptcha-response"];
+    } else {
+        $response_key = '';
+    }
+
+	// secret_key
+	$secret_key = $plugin_cf['recaptcha']['key_secret'] ;
+
+	// api URL
+	$apiUrl = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secret_key . '&response=' . $response_key ;
+
+	$responceData = json_decode(file_get_contents($apiUrl));
+	if ($responceData->success) {
+	    return true; // OK
+	} else {
+	    // $responceData->error-codes ;// error Code
+	     return false; // FALSE
+	}
 }
 
 ?>
